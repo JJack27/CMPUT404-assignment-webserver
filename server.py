@@ -60,7 +60,6 @@ class MyWebServer(socketserver.BaseRequestHandler):
         if (method_type == "GET"):
             header = ""
             page = ""
-            
             try:
                 # add "index.html" to the end of address if it ends with "/"
                 if (address[-1] == "/"):
