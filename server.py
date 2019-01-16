@@ -1,6 +1,7 @@
 #  coding: utf-8 
 import socketserver
-
+import time
+import mimetypes
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,9 +31,66 @@ import socketserver
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
+
+        # receiving requests
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
-        self.request.sendall(bytearray("OK",'utf-8'))
+        
+        # getting the first line of HTTP requests
+        method_line = self.data.decode().split("\r\n")[0]
+        method_type, address, http_version = method_line.split(" ")
+        address = "./www" + address
+        
+        # testing purpose
+        print ("==============")
+        
+        # check if its a GET request
+        if (method_type == "GET"):
+            header = ""
+            page = ""
+            
+            try:
+                # add "index.html" to the end of address if it ends with "/"
+                if (address[-1] == "/"):
+                    address += "index.html"
+                
+                # define the header. Status code and mime type
+                header = "HTTP/1.1 200 OK\nContent-Type: "
+                mime_type = mimetypes.types_map["." + address.split(".")[-1]] 
+                header += mime_type
+                header += "\n\n"
+                print("Request Address: \t" ,address)
+                print("Response Header: \t", header)
+                # read the requested file and copy it to response
+                with open(address) as f:
+                    page = ""
+                    lines = f.readlines()
+                    for line in lines:
+                        page += line
+            except:
+                # for 404 page
+                header = "HTTP/1.1 404 Not Found\nContent-Type: text/html\n\n"
+                page = "<html>\
+                          <body>\
+                            <center>\
+                             <h3>Error 404: Not Found</h3>\
+                            </center>\
+                          </body>\
+                        </html>"
+            final_response = header + page
+            self.request.sendall(bytearray(final_response,'utf-8'))
+        else:
+            # for 405 page
+            header = "HTTP/1.1 405 Method Not Allowed\n Content-Type: text/html\n\n"
+            page = "<html>\
+                          <body>\
+                            <center>\
+                             <h3>Error 405: Method Not Allowed</h3>\
+                            </center>\
+                          </body>\
+                        </html>"
+
+            final_response = header+page
+            self.request.sendall(bytearray(final_response,'utf-8'))
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
