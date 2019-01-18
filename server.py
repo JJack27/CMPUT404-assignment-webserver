@@ -53,9 +53,6 @@ class MyWebServer(socketserver.BaseRequestHandler):
         method_type, address, http_version = method_line.split(" ")
         address = "./www" + address
         
-        # testing purpose
-        print ("==============")
-        
         # check if its a GET request
         if (method_type == "GET"):
             header = ""
@@ -70,8 +67,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 mime_type = mimetypes.types_map["." + address.split(".")[-1]] 
                 header += mime_type
                 header += "\n\n"
-                print("Request Address: \t" ,address)
-                print("Response Header: \t", header)
+
                 # read the requested file and copy it to response
                 with open(address) as f:
                     page = ""
