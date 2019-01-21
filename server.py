@@ -63,10 +63,10 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     address += "index.html"
                 
                 # define the header. Status code and mime type
-                header = "HTTP/1.1 200 OK\nContent-Type: "
+                header = "HTTP/1.1 200 OK\r\nContent-Type: "
                 mime_type = mimetypes.types_map["." + address.split(".")[-1]] 
                 header += mime_type
-                header += "\n\n"
+                header += "\r\n\r\n"
 
                 # read the requested file and copy it to response
                 with open(address) as f:
@@ -76,7 +76,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                         page += line
             except:
                 # for 404 page
-                header = "HTTP/1.1 404 Not Found\nContent-Type: text/html\n\n"
+                header = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n"
                 page = "<html>\
                           <body>\
                             <center>\
@@ -88,7 +88,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             self.request.sendall(bytearray(final_response,'utf-8'))
         else:
             # for 405 page
-            header = "HTTP/1.1 405 Method Not Allowed\n Content-Type: text/html\n\n"
+            header = "HTTP/1.1 405 Method Not Allowed\r\n Content-Type: text/html\r\n\r\n"
             page = "<html>\
                           <body>\
                             <center>\
