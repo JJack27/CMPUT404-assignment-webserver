@@ -114,7 +114,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             self.request.sendall(bytearray(final_response,'utf-8'))
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 8080
+    HOST, PORT = "0.0.0.0", 80
 
     socketserver.TCPServer.allow_reuse_address = True
     # Create the server, binding to localhost on port 8080
